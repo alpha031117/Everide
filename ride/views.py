@@ -56,6 +56,13 @@ def updateRide(request, pk):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['DELETE'])
+def deleteRide(request, pk):
+    ride = Ride.objects.get(id=pk)
+    ride.delete()
+
+    return Response('Ride is deleted.')
+
 @api_view(['GET'])
 def get_booking_history(request, user_id):
     # Filter BookingHistory objects for the given user ID
