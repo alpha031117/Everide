@@ -15,7 +15,7 @@ class DriverSerializer(serializers.ModelSerializer):
 from django.contrib.auth.hashers import make_password
 
 class CreateMyUserSerializer(serializers.ModelSerializer):
-    profilePicture = serializers.ImageField(max_length=None, use_url=True)
+    profilePicture = serializers.ImageField(max_length=None, use_url=True, required=False)
     class Meta:
         model = MyUser
         fields = ['username', 'email', 'password', 'phoneNumber', 'profilePicture']

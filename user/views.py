@@ -30,20 +30,55 @@ def get_driver(request):
     return Response(serializer.data)
 
 @api_view(['POST'])
-def create_user(request):
-    serializer = CreateMyUserSerializer(data=request.data)
+def createUser(request):
+    data = request.data
+
+    user = MyUser.objects.create(
+        username=data['username'], 
+        email=data['email'], 
+        password=data['password'], 
+        phoneNumber=data['phoneNumber']
+    )
+
+    serializer = MyUserSerializer(user, many=False)
+    return Response(serializer.data)
+
+@api_view(['PUT', 'PATCH'])
+def updateUser(request, pk):
+    try:
+        user = MyUser.objects.get(pk=pk)
+    except MyUser.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = MyUserSerializer(user, data=request.data, partial=True)  # Pass request data to serializer, allowing partial updates
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['DELETE'])
+def deleteUser(request, pk):
+    user = MyUser.objects.get(id=pk)
+    user.delete()
+
+    return Response('User deleted')
+
+
 @api_view(['POST'])
-def create_driver(request):
-    serializer = DriverSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+def createDriver(request):
+    data = request.data
+
+    driver = Driver.objects.create(
+        name=data['name'], 
+        car_model=data['car_model'], 
+        plate_number=data['plate_number'], 
+        rating=data['rating'], 
+        active=data['active'], 
+        service_duration_year=data['service_duration_year']
+    )
+
+    serializer = DriverSerializer(driver, many=False)
+    return Response(serializer.data)
 
 @api_view(['POST'])
 def login_view(request):

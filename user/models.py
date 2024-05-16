@@ -6,7 +6,7 @@ class MyUser(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
     phoneNumber = models.CharField(max_length=20)
-    profilePicture = models.ImageField(upload_to='profile_pictures/')
+    profilePicture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     friends = models.ManyToManyField('self', related_name='friends_list', blank=True, symmetrical=False)
 
     def __str__(self):

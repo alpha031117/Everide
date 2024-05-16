@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializer import MyRideSerializer
+from .serializers import MyRideSerializer
 from .models import Ride 
 from user.models import MyUser
 

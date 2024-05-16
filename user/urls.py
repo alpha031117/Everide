@@ -3,11 +3,21 @@ from . import views
 
 urlpatterns = [
     path("", views.get_routes, name="routes"),
+
+    # User CRUD API
     path("user/", views.get_user, name="user"),
+    path("user/create/", views.createUser, name="create_user"),
+    path("user/update/<str:pk>/", views.updateUser, name="update_user"),
+    path("user/delete/<str:pk>/", views.deleteUser, name="delete_user"),
+
+    # Driver CRUD API
     path("driver/", views.get_driver, name="driver"),
-    path("user/create/", views.create_user, name="create_user"),
-    path("driver/create/", views.create_driver, name="create_driver"),
+    path("driver/create/", views.createDriver, name="create_driver"),
+
+    # Login Authentication API
     path("login/", views.login_view, name="login"),
+
+    # Add Friend API
     path("add_friend/", views.add_friend, name="add_friend"),
 
 ]
