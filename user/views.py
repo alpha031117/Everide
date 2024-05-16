@@ -1,7 +1,8 @@
 from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializer import MyUserSerializer
+from .serializers import MyUserSerializer, DriverSerializer, LoginSerializer, CreateMyUserSerializer
 from .models import MyUser, Driver
 
 @api_view(['GET'])
@@ -25,5 +26,73 @@ def get_user(request):
 @api_view(['GET'])
 def get_driver(request):
     driver = Driver.objects.all()
-    serializer = MyUserSerializer(driver, many=True)
+    serializer = DriverSerializer(driver, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def createUser(request):
+    data = request.data
+
+    user = MyUser.objects.create(
+        username=data['username'], 
+        email=data['email'], 
+        password=data['password'], 
+        phoneNumber=data['phoneNumber']
+    )
+
+    serializer = MyUserSerializer(user, many=False)
+    return Response(serializer.data)
+
+@api_view(['PUT', 'PATCH'])
+def updateUser(request, pk):
+    try:
+        user = MyUser.objects.get(pk=pk)
+    except MyUser.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = MyUserSerializer(user, data=request.data, partial=True)  # Pass request data to serializer, allowing partial updates
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def deleteUser(request, pk):
+    user = MyUser.objects.get(id=pk)
+    user.delete()
+
+    return Response('User deleted')
+
+
+@api_view(['POST'])
+def createDriver(request):
+    data = request.data
+
+    driver = Driver.objects.create(
+        name=data['name'], 
+        car_model=data['car_model'], 
+        plate_number=data['plate_number'], 
+        rating=data['rating'], 
+        active=data['active'], 
+        service_duration_year=data['service_duration_year']
+    )
+
+    serializer = DriverSerializer(driver, many=False)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def login_view(request):
+    if request.method == 'POST':
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def add_friend(request):
+    if request.method == 'POST':
+        user = MyUser.objects.get(username=request.data['username'])
+        friend = MyUser.objects.get(username=request.data['friend'])
+        user.friends.add(friend)
+        return Response(status=status.HTTP_200_OK)
+    

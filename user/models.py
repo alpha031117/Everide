@@ -6,8 +6,8 @@ class MyUser(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
     phoneNumber = models.CharField(max_length=20)
-    profilePicture = models.ImageField(upload_to='profile_pictures/')
-    friends = models.ManyToManyField('self', related_name='friends_list', blank=True)
+    profilePicture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    friends = models.ManyToManyField('self', related_name='friends_list', blank=True, symmetrical=False)
 
     def __str__(self):
         return self.username
@@ -18,7 +18,7 @@ class Driver(models.Model):
     plate_number = models.CharField(max_length=20)
     rating = models.FloatField(default=0)
     active = models.BooleanField(default=True)
-    service_duration = models.DurationField()
+    service_duration_year = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
