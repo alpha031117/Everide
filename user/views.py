@@ -52,4 +52,12 @@ def login_view(request):
         if serializer.is_valid():
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def add_friend(request):
+    if request.method == 'POST':
+        user = MyUser.objects.get(username=request.data['username'])
+        friend = MyUser.objects.get(username=request.data['friend'])
+        user.friends.add(friend)
+        return Response(status=status.HTTP_200_OK)
     

@@ -8,4 +8,6 @@ urlpatterns = [
     path("user/create/", views.create_user, name="create_user"),
     path("driver/create/", views.create_driver, name="create_driver"),
     path("login/", views.login_view, name="login"),
+    path("add_friend/", views.add_friend, name="add_friend"),
+
 ]
