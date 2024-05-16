@@ -12,23 +12,23 @@ class DriverSerializer(serializers.ModelSerializer):
         model = Driver
         fields = '__all__'
 
-from django.contrib.auth.hashers import make_password
+# from django.contrib.auth.hashers import make_password
 
-class CreateMyUserSerializer(serializers.ModelSerializer):
-    profilePicture = serializers.ImageField(max_length=None, use_url=True, required=False)
-    class Meta:
-        model = MyUser
-        fields = ['username', 'email', 'password', 'phoneNumber', 'profilePicture']
-        extra_kwargs = {
-            'password': {'write_only': True},
-        }
+# class CreateMyUserSerializer(serializers.ModelSerializer):
+#     profilePicture = serializers.ImageField(max_length=None, use_url=True, required=False)
+#     class Meta:
+#         model = MyUser
+#         fields = ['username', 'email', 'password', 'phoneNumber', 'profilePicture']
+#         extra_kwargs = {
+#             'password': {'write_only': True},
+#         }
 
-    def create(self, validated_data):
-        # Hash the password before saving
-        validated_data['password'] = make_password(validated_data['password'])
+#     def create(self, validated_data):
+#         # Hash the password before saving
+#         validated_data['password'] = make_password(validated_data['password'])
 
-        user = MyUser.objects.create_user(**validated_data)
-        return user
+#         user = MyUser.objects.create_user(**validated_data)
+#         return user
     
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
