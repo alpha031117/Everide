@@ -32,15 +32,14 @@ def createRide(request):
         user=user,
         driver=driver,
         pickup_location=data['pickup_location'],
-        destination=data['destination'],
-        base_fare=data['base_fare'],
+        destination=data['destination_location'],
         distance=data['distance'],
         # Note: total_received will be automatically calculated in the model's save method
         completed=data['completed'],
-        date=data['date'],
+        shared_with_friends=data['shared_with_friends']
     )
 
-    serializer = MyRideSerializer(ride, many=False)
+    serializer = MyRideSerializer(ride, many=True)
     return Response(serializer.data)
 
 @api_view(['PUT', 'PATCH'])

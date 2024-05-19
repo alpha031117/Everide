@@ -16,8 +16,10 @@ class Driver(models.Model):
     car_model = models.CharField(max_length=100)
     plate_number = models.CharField(max_length=20)
     rating = models.FloatField(default=0)
-    active = models.BooleanField(default=True)
+    available = models.BooleanField(default=True)
     service_duration_year = models.IntegerField(default=0)
+    current_longtidue = models.DecimalField(max_digits=9, decimal_places=6, default=0.0)
+    current_latitude = models.DecimalField(max_digits=9, decimal_places=6, default=0.0)
 
     def __str__(self):
         return self.name
