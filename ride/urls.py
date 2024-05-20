@@ -4,11 +4,11 @@ from . import views
 urlpatterns = [
     # Ride CRUD API
     path("ride/", views.get_ride, name="ride"),
-    path("ride/<str:pk>/", views.get_user_ride, name="user_ride"),
+    path("ride/<int:pk>/", views.get_user_ride, name="user_ride"),
     path("ride/create/", views.createRide, name="create_ride"),
-    path("ride/update/<str:pk>/", views.updateRide, name="update_ride"),
-    path("ride/delete/<str:pk>/", views.deleteRide, name="delete_ride"),
+    path("ride/update/<int:pk>/", views.updateRide, name="update_ride"),
+    path("ride/delete/<int:pk>/", views.deleteRide, name="delete_ride"),
 
     # Booking History API
-    path("booking_history/<str:user_id>/", views.get_booking_history, name="booking_history"),
+    path("booking_history/<int:user_id>/", views.get_booking_history, name="booking_history"),
 ]

@@ -27,19 +27,20 @@ def createRide(request):
     data = request.data
     user = get_object_or_404(MyUser, id=data['user'])
     driver = get_object_or_404(Driver, id=data['driver'])
+    shared_with_friends_ids = data.get('shared_with_friends', [])
 
     ride = Ride.objects.create(
         user=user,
         driver=driver,
         pickup_location=data['pickup_location'],
-        destination=data['destination_location'],
+        destination_location=data['destination_location'],  # Corrected field name
         distance=data['distance'],
+        type_of_ride=data['type_of_ride'],
         # Note: total_received will be automatically calculated in the model's save method
-        completed=data['completed'],
-        shared_with_friends=data['shared_with_friends']
     )
+    ride.shared_with_friends.set(shared_with_friends_ids)
 
-    serializer = MyRideSerializer(ride, many=True)
+    serializer = MyRideSerializer(ride, many=False)
     return Response(serializer.data)
 
 @api_view(['PUT', 'PATCH'])

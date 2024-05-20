@@ -10,8 +10,8 @@ class Ride(models.Model):
         ('Smooth', 'Smooth'),
     )
 
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='user')
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='driver')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='ride_user')
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='ride_driver')
     pickup_location = models.CharField(max_length=255)
     destination_location = models.CharField(max_length=255)
     distance = models.FloatField()
@@ -23,7 +23,7 @@ class Ride(models.Model):
     shared_with_friends = models.ManyToManyField(MyUser, related_name='shared_rides', blank=True)
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)  # Corrected invocation of super()
+        super().__init__(*args, **kwargs)  
 
     def __str__(self):
         return f"Ride from {self.pickup_location} to {self.destination_location}"
