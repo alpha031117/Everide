@@ -7,8 +7,8 @@ urlpatterns = [
     # User CRUD API
     path("user/", views.get_user, name="user"),
     path("user/create/", views.createUser, name="create_user"),
-    path("user/update/<str:pk>/", views.updateUser, name="update_user"),
-    path("user/delete/<str:pk>/", views.deleteUser, name="delete_user"),
+    path("user/update/<int:pk>/", views.updateUser, name="update_user"),
+    path("user/delete/<int:pk>/", views.deleteUser, name="delete_user"),
 
     # Driver CRUD API
     path("driver/", views.get_driver, name="driver"),

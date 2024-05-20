@@ -6,12 +6,14 @@ from .serializers import MyRideSerializer
 from .models import Ride
 from user.models import MyUser, Driver
 
+# API for getting all rides
 @api_view(['GET'])
 def get_ride(request):
     ride = Ride.objects.all()
     serializer = MyRideSerializer(ride, many=True)
     return Response(serializer.data)
 
+# API for getting rides of a specific user
 @api_view(['GET'])
 def get_user_ride(request, pk):
     try:
@@ -22,6 +24,7 @@ def get_user_ride(request, pk):
     except MyUser.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+# API for creating a ride
 @api_view(['POST'])
 def createRide(request):
     data = request.data
@@ -43,6 +46,7 @@ def createRide(request):
     serializer = MyRideSerializer(ride, many=False)
     return Response(serializer.data)
 
+# API for updating a ride
 @api_view(['PUT', 'PATCH'])
 def updateRide(request, pk):
     try:
@@ -56,13 +60,31 @@ def updateRide(request, pk):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# API for marking a ride as complete
+@api_view(['PUT', 'PATCH'])
+def completeRide(request, pk):
+    ride = get_object_or_404(Ride, id=pk)
+    
+    if request.method == 'PUT':
+        # For PUT requests, mark the ride as completed
+        ride.completed = True
+        ride.save()
+    elif request.method == 'PATCH':
+        # For PATCH requests, update only the 'completed' field
+        ride.completed = True
+    
+    # Return a success response with appropriate status code
+    return Response('Ride is complete.', status=status.HTTP_200_OK)
+
+# API for cancelling a ride
 @api_view(['DELETE'])
-def deleteRide(request, pk):
+def cancelRide(request, pk):
     ride = Ride.objects.get(id=pk)
     ride.delete()
 
-    return Response('Ride is deleted.')
+    return Response('Ride is cancelled.')
 
+# API for getting booking history of a user
 @api_view(['GET'])
 def get_booking_history(request, user_id):
     # Filter BookingHistory objects for the given user ID
