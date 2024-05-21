@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyUserSerializer, DriverSerializer, LoginSerializer
 from .models import MyUser, Driver
+from carbonFootprint.models import CarbonFootprint
 
 @api_view(['GET'])
 def get_routes(request):
@@ -38,6 +39,12 @@ def createUser(request):
         email=data['email'], 
         password=data['password'], 
         phoneNumber=data['phoneNumber']
+    )
+
+    CarbonFootprint.objects.create(
+        user=user,
+        tier='No Tier',
+        footprint=0
     )
 
     serializer = MyUserSerializer(user, many=False)

@@ -23,5 +23,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("user.urls"), name="user"),
     path("", include("ride.urls"), name="ride"),
+    path("", include("carbonFootprint.urls"), name="carbon_footprint"),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

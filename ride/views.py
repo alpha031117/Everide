@@ -5,6 +5,7 @@ from rest_framework import status
 from .serializers import MyRideSerializer
 from .models import Ride
 from user.models import MyUser, Driver
+from carbonFootprint.models import CarbonFootprint
 
 # API for getting all rides
 @api_view(['GET'])
@@ -43,6 +44,9 @@ def createRide(request):
         # Note: total_received will be automatically calculated in the model's save method
     )
     ride.shared_with_friends.set(shared_with_friends_ids)
+
+    # Call the function to update the carbon footprint
+    update_carbon_footprint(user, ride.distance)
 
     serializer = MyRideSerializer(ride, many=False)
     return Response(serializer.data)
@@ -93,3 +97,28 @@ def get_booking_history(request, user_id):
     history = Ride.objects.filter(user=user)
     serializer = MyRideSerializer(history, many=True)
     return Response(serializer.data)
+
+def update_carbon_footprint(user, distance):
+    cfp, created = CarbonFootprint.objects.get_or_create(user=user)
+    
+    # Determine tier based on distance traveled
+    if distance >= 3000:
+        tier = 'Gold'
+    elif distance >= 1000:
+        tier = 'Silver'
+    elif distance >= 100:
+        tier = 'Bronze'
+    else:
+        tier = 'No Tier'
+
+    # Apply tier-based multiplier to footprint
+    if tier == 'Silver':
+        cfp.footprint += distance * 170 * 1.2 / 1000  # Multiply by 1.2 for Silver tier
+    elif tier == 'Gold':
+        cfp.footprint += distance * 170 * 1.4 / 1000  # Multiply by 1.4 for Gold tier
+    elif tier == 'Bronze':
+        cfp.footprint += distance * 170 * 1.1 / 1000  # Multiply by 1.1 for Bronze tier
+    else:
+        cfp.footprint += distance * 170 / 1000
+    
+    cfp.save()
