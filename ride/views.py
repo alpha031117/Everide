@@ -18,6 +18,7 @@ def get_ride(request):
 def get_user_ride(request, pk):
     try:
         user_obj = MyUser.objects.get(id=pk)
+        print(user_obj)
         rides = Ride.objects.filter(user=user_obj)
         serializer = MyRideSerializer(rides, many=True)
         return Response(serializer.data)
