@@ -100,25 +100,16 @@ def get_booking_history(request, user_id):
 
 def update_carbon_footprint(user, distance):
     cfp, created = CarbonFootprint.objects.get_or_create(user=user)
-    
-    # Determine tier based on distance traveled
-    if distance >= 3000:
-        tier = 'Gold'
-    elif distance >= 1000:
-        tier = 'Silver'
-    elif distance >= 100:
-        tier = 'Bronze'
-    else:
-        tier = 'No Tier'
 
+    cfp.total_distance += distance
     # Apply tier-based multiplier to footprint
-    if tier == 'Silver':
-        cfp.footprint += distance * 170 * 1.2 / 1000  # Multiply by 1.2 for Silver tier
-    elif tier == 'Gold':
-        cfp.footprint += distance * 170 * 1.4 / 1000  # Multiply by 1.4 for Gold tier
-    elif tier == 'Bronze':
-        cfp.footprint += distance * 170 * 1.1 / 1000  # Multiply by 1.1 for Bronze tier
+    if cfp.tier == 'Silver':
+        cfp.footprint += distance * 170 * 1.2   # Multiply by 1.2 for Silver tier
+    elif cfp.tier == 'Gold':
+        cfp.footprint += distance * 170 * 1.4   # Multiply by 1.4 for Gold tier
+    elif cfp.tier == 'Bronze':
+        cfp.footprint += distance * 170 * 1.1   # Multiply by 1.1 for Bronze tier
     else:
-        cfp.footprint += distance * 170 / 1000
+        cfp.footprint += distance * 170 
     
     cfp.save()

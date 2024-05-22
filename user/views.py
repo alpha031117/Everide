@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .serializers import MyUserSerializer, DriverSerializer, LoginSerializer
 from .models import MyUser, Driver
 from carbonFootprint.models import CarbonFootprint
+from wallet.models import EWallet
 
 @api_view(['GET'])
 def get_routes(request):
@@ -45,6 +46,11 @@ def createUser(request):
         user=user,
         tier='No Tier',
         footprint=0
+    )
+
+    EWallet.objects.create(
+        user=user,
+        amount=0.0
     )
 
     serializer = MyUserSerializer(user, many=False)

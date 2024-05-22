@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "ride.apps.RideConfig",
     "promo.apps.PromoConfig",
     "carbonFootprint.apps.CarbonfootprintConfig",  
+    "wallet.apps.WalletConfig",
     "rest_framework",
     "corsheaders",
 ]

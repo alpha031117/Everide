@@ -24,5 +24,7 @@ urlpatterns = [
     path("", include("user.urls"), name="user"),
     path("", include("ride.urls"), name="ride"),
     path("", include("carbonFootprint.urls"), name="carbon_footprint"),
+    path("", include("promo.urls"), name="promo"),
+    path("", include("wallet.urls"), name="wallet"),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
