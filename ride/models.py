@@ -19,6 +19,7 @@ class Ride(models.Model):
     base_fare = models.FloatField(blank=True, null=True)
     total_received = models.FloatField(blank=True, null=True)
     completed = models.BooleanField(default=False)
+    carbonfootprint_earned = models.FloatField(default=0)
     date = models.DateTimeField(auto_now_add=True)
     shared_with_friends = models.ManyToManyField(MyUser, related_name='shared_rides', blank=True)
 

@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import MyRideSerializer, FootprintSerializer
+from .serializers import MyRideSerializer
 from .models import Ride
 from user.models import MyUser, Driver
 from carbonFootprint.models import CarbonFootprint
@@ -93,7 +93,10 @@ def completeRide(request, pk):
     else:
         carbonfootprint_earned = distance * 170 
 
-    serializer = FootprintSerializer(carbonfootprint_earned, many=False)
+    ride.carbonfootprint_earned = carbonfootprint_earned
+    ride.save()
+
+    serializer = MyRideSerializer(ride, many=False)
     
     # Return a success response with appropriate status code
     return Response(serializer.data, status=status.HTTP_200_OK)

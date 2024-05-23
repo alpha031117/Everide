@@ -1,11 +1,12 @@
 from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyUserSerializer, DriverSerializer, LoginSerializer
 from .models import MyUser, Driver
 from carbonFootprint.models import CarbonFootprint
 from wallet.models import EWallet
+from django.core.files.base import ContentFile
+from base64 import b64decode
 
 @api_view(['GET'])
 def get_routes(request):
@@ -35,12 +36,18 @@ def get_driver(request):
 def createUser(request):
     data = request.data
 
+    # Handling friends
+    friend_ids = data.get('friends', [])
+    friends = MyUser.objects.filter(id__in=friend_ids)
+
     user = MyUser.objects.create(
         username=data['username'], 
         email=data['email'], 
         password=data['password'], 
         phoneNumber=data['phoneNumber']
     )
+
+    user.friends.add(*friends)  # Add friends to the user
 
     CarbonFootprint.objects.create(
         user=user,
