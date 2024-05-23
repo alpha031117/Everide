@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import MyRideSerializer
+from .serializers import MyRideSerializer, FootprintSerializer
 from .models import Ride
 from user.models import MyUser, Driver
 from carbonFootprint.models import CarbonFootprint
@@ -74,12 +74,29 @@ def completeRide(request, pk):
         # For PUT requests, mark the ride as completed
         ride.completed = True
         ride.save()
+
     elif request.method == 'PATCH':
         # For PATCH requests, update only the 'completed' field
         ride.completed = True
+
+    user = get_object_or_404(MyUser, id=ride.user.id)
+    cfp = get_object_or_404(CarbonFootprint, user=user)
+    distance = ride.distance
+
+    # Apply tier-based multiplier to footprint
+    if cfp.tier == 'Silver':
+        carbonfootprint_earned = distance * 170 * 1.2   # Multiply by 1.2 for Silver tier
+    elif cfp.tier == 'Gold':
+        carbonfootprint_earned = distance * 170 * 1.4   # Multiply by 1.4 for Gold tier
+    elif cfp.tier == 'Bronze':
+        carbonfootprint_earned = distance * 170 * 1.1   # Multiply by 1.1 for Bronze tier
+    else:
+        carbonfootprint_earned = distance * 170 
+
+    serializer = FootprintSerializer(carbonfootprint_earned, many=False)
     
     # Return a success response with appropriate status code
-    return Response('Ride is complete.', status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # API for cancelling a ride
 @api_view(['DELETE'])
