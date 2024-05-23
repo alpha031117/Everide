@@ -1,26 +1,45 @@
+from decimal import Decimal
 from django.db import models
 from user.models import MyUser, Driver
+from decimal import Decimal, ROUND_DOWN
 
 class Ride(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    CHOICES = (
+        ('Peak', 'Peak'),
+        ('Normal', 'Normal'),
+        ('Smooth', 'Smooth'),
+    )
+
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='ride_user')
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='ride_driver')
     pickup_location = models.CharField(max_length=255)
-    destination = models.CharField(max_length=255)
-    base_fare = models.FloatField()
-    extra_tips = models.FloatField()
-    total_received = models.FloatField()
+    destination_location = models.CharField(max_length=255)
+    distance = models.FloatField()
+    type_of_ride = models.CharField(max_length=255, choices=CHOICES, default='Normal')
+    base_fare = models.FloatField(blank=True, null=True)
+    total_received = models.FloatField(blank=True, null=True)
     completed = models.BooleanField(default=False)
+    carbonfootprint_earned = models.FloatField(default=0)
     date = models.DateTimeField(auto_now_add=True)
     shared_with_friends = models.ManyToManyField(MyUser, related_name='shared_rides', blank=True)
 
-    def __str__(self):
-        return f"Ride from {self.pickup_location} to {self.destination}"
-    
-class BookingHistory(models.Model):
-    id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='booking_history')
-    ride = models.ForeignKey(Ride, on_delete=models.CASCADE)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)  
 
     def __str__(self):
-        return f"Booking history for {self.user.username}"
+        return f"Ride from {self.pickup_location} to {self.destination_location}"
+    
+    def save(self, *args, **kwargs):
+        if not self.id:  # Check if it's a new instance
+            if self.type_of_ride == 'Peak':
+                self.base_fare = 1.5
+            elif self.type_of_ride == 'Normal':
+                self.base_fare = 1.3
+            else:
+                self.base_fare = 1.0
+            
+            total_received = Decimal(self.base_fare * self.distance).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
+            self.total_received = float(total_received)
+        super().save(*args, **kwargs)
+
 

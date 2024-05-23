@@ -16,9 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from everide import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("user.urls")),
-    path("", include("ride.urls")),
-]
+    path("", include("user.urls"), name="user"),
+    path("", include("ride.urls"), name="ride"),
+    path("", include("carbonFootprint.urls"), name="carbon_footprint"),
+    path("", include("promo.urls"), name="promo"),
+    path("", include("wallet.urls"), name="wallet"),
+    
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
