@@ -7,6 +7,7 @@ from carbonFootprint.models import CarbonFootprint
 from wallet.models import EWallet
 from django.core.files.base import ContentFile
 from base64 import b64decode
+from django.shortcuts import get_object_or_404, get_list_or_404
 
 @api_view(['GET'])
 def get_routes(request):
@@ -24,6 +25,23 @@ def get_routes(request):
 def get_user(request):
     user = MyUser.objects.all()
     serializer = MyUserSerializer(user, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_user_friends(request, pk):
+    user = get_object_or_404(MyUser, pk=pk)
+    
+    # Access the related friends correctly
+    friends = user.friends.all()
+    
+    # Check if the friends list is empty
+    if not friends.exists():
+        return Response([])
+    
+    # Serialize the list of friends
+    serializer = MyUserSerializer(friends, many=True)
+    
+    # Return the serialized data as a response
     return Response(serializer.data)
 
 @api_view(['GET'])

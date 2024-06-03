@@ -6,6 +6,7 @@ urlpatterns = [
 
     # User CRUD API
     path("user/", views.get_user, name="user"),
+    path('user/<int:pk>/friends/', views.get_user_friends, name='get_user_friends'),
     path("user/create/", views.createUser, name="create_user"),
     path("user/update/<int:pk>/", views.updateUser, name="update_user"),
     path("user/delete/<int:pk>/", views.deleteUser, name="delete_user"),
